@@ -9,20 +9,25 @@ class fourthOrderPDDODiscretization:
         self.dy = 1/PDDOConstants.NY
         self.l1 = PDDOConstants.L1
         self.l2 = PDDOConstants.L2
-        self.deltaX = PDDOConstants.HORIZON*self.dx
-        self.deltaY = PDDOConstants.HORIZON*self.dy
+        self.deltaX = PDDOConstants.HORIZON4*self.dx
+        self.deltaY = PDDOConstants.HORIZON4*self.dy
         self.bVec40 = PDDOConstants.BVEC40 
         self.bVec04 = PDDOConstants.BVEC04
+        self.horizon = PDDOConstants.HORIZON4
+        self.kernelDim = PDDOConstants.KERNELDIM4
     
     def createPDDOKernelMesh(self):
         indexing = 'xy'
-        xCoords = np.linspace(self.dx/2,(PDDOConstants.HORIZON + 1)*self.dx , int(PDDOConstants.HORIZON*2 + 1))
-        yCoords = np.linspace(self.dy/2,(PDDOConstants.HORIZON + 1)*self.dy, int(PDDOConstants.HORIZON*2 + 1))
+        #xCoords = np.linspace(self.dx/2,(self.horizon + 1)*self.dx , int(self.horizon*2 + 1))
+        #yCoords = np.linspace(self.dy/2,(self.horizon + 1)*self.dy, int(self.horizon*2 + 1))
+        
+        xCoords = np.arange(self.dx/2, (self.horizon*2 + 1)*self.dx, self.dx)
+        yCoords = np.arange(self.dy/2, (self.horizon*2 + 1)*self.dy, self.dy)
         xCoords, yCoords = np.meshgrid(xCoords, yCoords, indexing=indexing)
         xCoords = xCoords.reshape(-1, 1)
         yCoords = yCoords.reshape(-1, 1)
         self.PDDOKernelMesh = np.array([xCoords[:,0], yCoords[:,0]]).T
-
+    
     def calculateXis(self):
         midPDDONodeCoords = self.PDDOKernelMesh[int((len(self.PDDOKernelMesh)-1)/2),:]
         self.xXis = midPDDONodeCoords[0]-self.PDDOKernelMesh[:,0]
@@ -59,21 +64,24 @@ class fourthOrderPDDODiscretization:
             weight = np.exp(-4*(xiMag/deltaMag)**2)
             g40.append(weight*(np.inner(solve(diffMat,self.bVec40), pList)))
             g04.append(weight*(np.inner(solve(diffMat,self.bVec04), pList)))
-        self.g40 = g40.reshape((11,11))
-        self.g04 = g04.reshape((11,11))
-        #np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\g04Reshape.csv', np.array(g04).reshape((11,11)), delimiter=",")
+        self.g40 = np.array(g40).reshape((self.kernelDim,self.kernelDim))
+        self.g04 = np.array(g04).reshape((self.kernelDim,self.kernelDim))
     
+    def normalizeGPolynomials(self):
+        #self.g40 = np.array(self.g40.flatten()/np.linalg.norm(self.g40.flatten(),1)).reshape((self.kernelDim,self.kernelDim))
+        #self.g04 = np.array(self.g04.flatten()/np.linalg.norm(self.g04.flatten(),1)).reshape((self.kernelDim,self.kernelDim))
+        self.g40 = self.g40
+        self.g04 = self.g04
+
+    def combineGPolynomials(self):
+        self.kernel = -(self.g40 + self.g04)
+
     def createPDDOKernel(self):
         self.calculateXis()
         self.calculateGPolynomials()
-
-    def findFamilyMembers(self):
-        tree = KDTree(self.coords, leaf_size=2)
-        self.familyMembers = tree.query_radius(self.coords, r = self.deltaX)
+        self.normalizeGPolynomials()
+        self.combineGPolynomials()
 
     def solve(self):
         self.createPDDOKernelMesh()
         self.createPDDOKernel()
-        #np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\mesh.csv', self.PDDOKernelMesh, delimiter=",")
-        #self.findFamilyMembers()
-        #print(self.familyMembers) 
