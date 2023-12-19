@@ -15,8 +15,11 @@ def main():
     #mesh = createMesh.createMesh()
     #mesh.solve()
 
+    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\lenaBefore.csv', noisyLena, delimiter=",")
+
     paperMethod = paperDiscretization.paperDiscretization(noisyLena)
     paperMethod.solve()
+    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedImages.csv', paperMethod.denoisedImages, delimiter=",",fmt='%3.3f')
 
     #PDDOMethod = PDDO4.fourthOrderPDDODiscretization()
     #PDDOMethod.solve()
