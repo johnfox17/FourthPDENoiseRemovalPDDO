@@ -57,27 +57,33 @@ class paperDiscretization:
             for iColumn in range(1,self.numColumns+1,1):
                 currentMean = (self.denoisedLena[iRow+1,iColumn] + self.denoisedLena[iRow-1,iColumn] + self.denoisedLena[iRow,iColumn+1] + self.denoisedLena[iRow,iColumn-1])/4
                 currentSigSqr = (self.denoisedLena[iRow+1,iColumn]**2 + self.denoisedLena[iRow-1,iColumn]**2 + self.denoisedLena[iRow,iColumn+1]**2 + self.denoisedLena[iRow,iColumn-1]**2)/4 - currentMean**2
-                if (np.abs(self.denoisedLena[iRow,iColumn] - currentMean)**2 > k*currentSigSqr):
+                if ((np.abs(self.denoisedLena[iRow,iColumn] - currentMean))**2 > k*currentSigSqr):
                     self.despeckledImage[iRow,iColumn] = currentMean
                 else:
                     self.despeckledImage[iRow,iColumn]  = self.denoisedLena[iRow,iColumn]
 
 
     def timeIntegrate(self):
-        numTimeSteps = 500
+        numTimeSteps = 50
         denoisedImages = []
+        denoisedDespeckledImages = []
         for i in range(numTimeSteps):
             self.applyBoundaryConditions()
             self.calculateLaplacianOfIntensity()
+            self.denoisedLena =  np.array(self.laplacianOfIntensity[1:self.numRows+1,1:self.numColumns+1])
+            self.applyBoundaryConditions()    
+            self.laplacianOfGFunction = np.array(self.denoisedLena)
             self.calcCoefficients()
             self.calculateLaplacianOfGFunction()
             self.denoisedLena = self.denoisedLena - 0.25*self.laplacianOfGFunction
             self.noisyLena = np.array(self.denoisedLena[1:self.numRows+1,1:self.numColumns+1])
             self.despeckleImage()
-            currentImage = np.array(np.transpose(self.despeckledImage[1:self.numRows+1,1:self.numColumns+1].flatten().reshape((self.numRows*self.numColumns,1)))[0])
+            currentDenoisedDespekledImage = np.array(np.transpose(self.despeckledImage[1:self.numRows+1,1:self.numColumns+1].flatten().reshape((self.numRows*self.numColumns,1)))[0])
 
-            denoisedImages.append(currentImage)
-        self.denoisedImages = denoisedImages 
+            denoisedDespeckledImages.append(currentDenoisedDespekledImage)
+            denoisedImages.append(np.transpose(self.noisyLena.flatten().reshape((self.numRows*self.numColumns,1)))[0])
+        self.denoisedDespeckledImages = denoisedDespeckledImages
+        self.denoisedImages = denoisedImages
              
     def solve(self):
         self.timeIntegrate()
