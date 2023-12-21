@@ -20,6 +20,7 @@ def main():
     paperMethod = paperDiscretization.paperDiscretization(noisyLena)
     paperMethod.solve()
     np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedImages.csv', paperMethod.denoisedImages, delimiter=",",fmt='%3.3f')
+    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages.csv', paperMethod.denoisedDespeckledImages, delimiter=",",fmt='%3.3f')
 
     #PDDOMethod = PDDO4.fourthOrderPDDODiscretization()
     #PDDOMethod.solve()

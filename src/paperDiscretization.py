@@ -38,7 +38,7 @@ class paperDiscretization:
         
     def calcCoefficients(self):
         self.coefficients = np.zeros((self.numRows+2, self.numColumns+2))
-        k = 0.5
+        k = 0.1
         for iRow in range(1,self.numRows+1,1):
             for iColumn in range(1,self.numColumns+1,1):
                 self.coefficients[iRow, iColumn] = 1/(1+ (self.laplacianOfIntensity[iRow,iColumn]/k)**2)
@@ -64,7 +64,7 @@ class paperDiscretization:
 
 
     def timeIntegrate(self):
-        numTimeSteps = 50
+        numTimeSteps = 1000
         denoisedImages = []
         denoisedDespeckledImages = []
         for i in range(numTimeSteps):
