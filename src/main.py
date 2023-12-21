@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import fourthOrderPDDODiscretization as PDDO4
 import paperDiscretization
-import createMesh
+import createPDDOKernel
 
 def main():
     lena = cv2.imread('../data/lena.png')
@@ -12,17 +12,17 @@ def main():
     noisyLena = cv2.cvtColor(noisyLena, cv2.COLOR_BGR2GRAY)
 
     
-    #mesh = createMesh.createMesh()
-    #mesh.solve()
 
-    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\lenaBefore.csv', noisyLena, delimiter=",")
+    #np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\lenaBefore.csv', noisyLena, delimiter=",")
 
-    paperMethod = paperDiscretization.paperDiscretization(noisyLena)
+    '''paperMethod = paperDiscretization.paperDiscretization(noisyLena)
     paperMethod.solve()
     np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedImages.csv', paperMethod.denoisedImages, delimiter=",",fmt='%3.3f')
-    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages.csv', paperMethod.denoisedDespeckledImages, delimiter=",",fmt='%3.3f')
+    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages.csv', paperMethod.denoisedDespeckledImages, delimiter=",",fmt='%3.3f')'''
 
-    #PDDOMethod = PDDO4.fourthOrderPDDODiscretization()
+    print('Here')
+    PDDOKernel = createPDDOKernel.createPDDOKernel()
+    PDDOKernel.solve()
     #PDDOMethod.solve()
 
     
