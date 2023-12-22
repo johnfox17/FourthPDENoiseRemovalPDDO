@@ -4,7 +4,7 @@ from sklearn.neighbors import KDTree
 from numpy.linalg import solve
 import calcPDDOLaplacian
 
-class createPDDOKernel:
+class PDDODenoising:
     def __init__(self):
         self.dx = 1/PDDOConstants.NX
         self.dy = 1/PDDOConstants.NY

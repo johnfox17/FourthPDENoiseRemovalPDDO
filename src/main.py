@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import fourthOrderPDDODiscretization as PDDO4
 import paperDiscretization
-import createPDDOKernel
+import PDDODenoising
 
 def main():
     lena = cv2.imread('../data/lena.png')
@@ -20,9 +20,8 @@ def main():
     np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedImages.csv', paperMethod.denoisedImages, delimiter=",",fmt='%3.3f')
     np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages.csv', paperMethod.denoisedDespeckledImages, delimiter=",",fmt='%3.3f')'''
 
-    print('Here')
-    PDDOKernel = createPDDOKernel.createPDDOKernel()
-    PDDOKernel.solve()
+    PDDOMethod = PDDODenoising.PDDODenoising()
+    PDDOMethod.solve()
     #PDDOMethod.solve()
 
     
