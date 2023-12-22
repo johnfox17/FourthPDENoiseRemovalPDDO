@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.neighbors import KDTree
 from numpy.linalg import solve
 import calcPDDOLaplacian
+from scipy import signal
 
 class PDDODenoising:
     def __init__(self, noisyLena):
@@ -21,33 +22,16 @@ class PDDODenoising:
         yCoords = yCoords.reshape(-1, 1)
         self.PDDOKernelMesh = np.array([xCoords[:,0], yCoords[:,0]]).T
 
-    def applyBoundaryConditions(self):
-        self.denoisedLena = np.pad(self.noisyLena, 1, mode='constant')
-        # Left BC
-        self.denoisedLena[1:self.numRows+1,0] = self.noisyLena[:,0]
-        #Right BC
-        self.denoisedLena[1:self.numRows+1,self.numColumns+1] = self.noisyLena[:,self.numColumns-1]
-        #Top BC
-        self.denoisedLena[self.numRows+1,1:self.numColumns+1] = self.noisyLena[self.numRows-1,:]
-        #Bottom BC
-        self.denoisedLena[0,1:self.numColumns+1] = self.noisyLena[0,:]
-        #Corners
-        self.denoisedLena[-1,0] = self.noisyLena[-1,0]
-        self.denoisedLena[0,0] = self.noisyLena[0,0]
-        self.denoisedLena[0,-1] = self.noisyLena[0,-1]
-        self.denoisedLena[-1,-1] = self.noisyLena[-1,-1]
-        self.denoisedLena = self.denoisedLena.astype(float)
-
-    #def calcLaplacianOfIntensity(self):
+    def calcLaplacianOfIntensity(self):
+        self.denoisedLena = signal.convolve2d(self.noisyLena, self.PDDOLaplacianKernel, boundary='symm', mode='same')
 
     def solve(self):
         self.createPDDOKernelMesh()
         PDDOLaplacian = calcPDDOLaplacian.calcPDDOLaplacian(self.PDDOKernelMesh)
         PDDOLaplacian.solve()
         self.PDDOLaplacianKernel = PDDOLaplacian.kernel
-        self.applyBoundaryConditions()
-        #self.calcLaplacianOfIntensity()
+        self.calcLaplacianOfIntensity()
 
-        np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/lenaBC.csv', self.denoisedLena, delimiter=",",fmt='%3.3f')
+        np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/laplacianImage.csv', self.denoisedLena, delimiter=",",fmt='%3.3f')
 
 
