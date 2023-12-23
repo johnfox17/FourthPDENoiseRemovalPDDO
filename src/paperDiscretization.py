@@ -38,7 +38,7 @@ class paperDiscretization:
         
     def calcCoefficients(self):
         self.coefficients = np.zeros((self.numRows+2, self.numColumns+2))
-        k = 0.1
+        k = 0.05
         for iRow in range(1,self.numRows+1,1):
             for iColumn in range(1,self.numColumns+1,1):
                 self.coefficients[iRow, iColumn] = 1/(1+ (self.laplacianOfIntensity[iRow,iColumn]/k)**2)
