@@ -30,7 +30,7 @@ class PDDODenoising:
 
     def calcCoefficients(self):
         self.coefficients = np.zeros((self.numRows, self.numColumns))
-        k = 0.1
+        k = 0.05
         for iRow in range(self.numRows):
             for iColumn in range(self.numColumns):
                 self.coefficients[iRow, iColumn] = 1/(1+ np.abs(self.laplacianOfIntensity[iRow,iColumn]/k)**2)
@@ -40,6 +40,23 @@ class PDDODenoising:
 
     def calcLaplacianOfLaplacianOfIntensity(self):
         self.laplacianOfLaplacianOfIntensity = signal.convolve2d(self.laplacianOfIntensity, self.PDDOLaplacianKernel, boundary='symm', mode='same')*self.dx*self.dy
+
+    def padImage(self):
+        self.noisyLena = np.pad(self.noisyLena, ((1, 1), (1, 1)), 'symmetric')
+    
+    def despeckleImage(self):
+        k = 3.0
+        self.despeckledImage = np.zeros((self.numRows+2, self.numColumns+2))
+        for iRow in range(1,self.numRows+1,1):
+            for iColumn in range(1,self.numColumns+1,1):
+                currentMean = (self.noisyLena[iRow+1,iColumn] + self.noisyLena[iRow-1,iColumn] + self.noisyLena[iRow,iColumn+1] + self.noisyLena[iRow,iColumn-1])/4
+                currentSigSqr = (self.noisyLena[iRow+1,iColumn]**2 + self.noisyLena[iRow-1,iColumn]**2 + self.noisyLena[iRow,iColumn+1]**2 + self.noisyLena[iRow,iColumn-1]**2)/4 - currentMean**2
+                if ((np.abs(self.noisyLena[iRow,iColumn] - currentMean))**2 > k*currentSigSqr):
+                    self.despeckledImage[iRow,iColumn] = currentMean
+                else:
+                    self.despeckledImage[iRow,iColumn]  = self.noisyLena[iRow,iColumn]
+        self.noisyLena = self.despeckledImage[1:self.numRows+1,1:self.numColumns+1]
+
 
     def solve(self):
         self.createPDDOKernelMesh()
@@ -51,8 +68,13 @@ class PDDODenoising:
             self.calcCoefficients()
             self.calcLaplacianOfCoefficients()
             self.calcLaplacianOfLaplacianOfIntensity()
-            self.noisyLena = self.noisyLena - 0.25*(np.multiply(self.coefficients, self.laplacianOfLaplacianOfIntensity) + np.multiply(self.laplacianOfCoefficients, self.laplacianOfIntensity))  
+            self.noisyLena = self.noisyLena - 0.25*(np.multiply(self.coefficients, self.laplacianOfLaplacianOfIntensity) + np.multiply(self.laplacianOfCoefficients, self.laplacianOfIntensity))
+        
+        self.padImage()
+        self.despeckleImage()
+
         #np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/coefficients.csv', self.coefficients, delimiter=",",fmt='%3.3f')
-        np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/denoisedLena.csv', self.noisyLena, delimiter=",")
+        #np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/denoisedLena.csv', self.noisyLena, delimiter=",")
+        np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedLena.csv', self.noisyLena, delimiter=",")
 
 
