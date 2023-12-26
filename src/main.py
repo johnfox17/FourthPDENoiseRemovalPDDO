@@ -15,15 +15,13 @@ def main():
 
     #np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\lenaBefore.csv', noisyLena, delimiter=",")
 
-    '''paperMethod = paperDiscretization.paperDiscretization(noisyLena)
+    paperMethod = paperDiscretization.paperDiscretization(noisyLena)
     paperMethod.solve()
-    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedImages.csv', paperMethod.denoisedImages, delimiter=",",fmt='%3.3f')
-    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages.csv', paperMethod.denoisedDespeckledImages, delimiter=",",fmt='%3.3f')'''
+    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages_Paper.csv', paperMethod.denoisedDespeckledImages, delimiter=",")
 
     PDDOMethod = PDDODenoising.PDDODenoising(noisyLena)
     PDDOMethod.solve()
-    #PDDOMethod.solve()
-
+    np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedDespeckledImages_PDDO.csv', PDDOMethod.denoisedDespeckledImages, delimiter=",")
     
     
     #np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\PDDOKernelMesh4.csv', PDDOMethod4.PDDOKernelMesh, delimiter=",")
