@@ -60,7 +60,7 @@ class paperDiscretization:
             self.denoisedLena = self.denoisedLena - 0.25*self.laplacianOfGFunction
             self.noisyLena = np.array(self.denoisedLena[1:self.numRows+1,1:self.numColumns+1])
             self.despeckleImage()
-        self.denoisedDespeckledImages = self.despeckledImage
+        self.denoisedDespeckledImages = self.despeckledImage[1:self.numRows+1,1:self.numColumns+1]
              
     def solve(self):
         self.timeIntegrate()
