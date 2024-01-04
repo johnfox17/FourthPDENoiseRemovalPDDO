@@ -73,8 +73,5 @@ class PDDODenoising:
         self.padImage()
         self.despeckleImage()
 
-        #np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/coefficients.csv', self.coefficients, delimiter=",",fmt='%3.3f')
-        #np.savetxt('/home/doctajfox/Documents/Thesis/FourthPDENoiseRemovalPDDO/data/denoisedLena.csv', self.noisyLena, delimiter=",")
-        np.savetxt('C:\\Users\\docta\\Documents\\Thesis\\FourthPDENoiseRemovalPDDO\\data\\denoisedLena.csv', self.noisyLena, delimiter=",")
 
 
