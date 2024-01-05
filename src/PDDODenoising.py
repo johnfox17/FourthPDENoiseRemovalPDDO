@@ -59,11 +59,12 @@ class PDDODenoising:
 
 
     def solve(self):
+        numTimeSteps = 1000
         self.createPDDOKernelMesh()
         PDDOLaplacian = calcPDDOLaplacian.calcPDDOLaplacian(self.PDDOKernelMesh)
         PDDOLaplacian.solve()
         self.PDDOLaplacianKernel = PDDOLaplacian.kernel
-        for iTime in range(1000):
+        for iTime in range(numTimeSteps):
             self.calcLaplacianOfIntensity()
             self.calcCoefficients()
             self.calcLaplacianOfCoefficients()
